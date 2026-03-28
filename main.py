@@ -59,11 +59,11 @@ def upload_file():
     bucket = client.bucket(os.environ.get("GCP_BUCKET_NAME", "learn_microservices"))
     blob = bucket.blob(f"{unique_id}_{file.filename}")
     blob.upload_from_file(file)
-    public_url = blob._get_download_url
+   #-- public_url = blob.
 
     return jsonify({
         "message": "File uploaded successfully",
-        "document_url": public_url
+        "document_url": f"{unique_id}_{file.filename}"
     }), 201
 
 
