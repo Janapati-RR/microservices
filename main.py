@@ -1,6 +1,7 @@
 import os
 import uuid
 from flask import Flask, request, jsonify
+from google.cloud import storage
 
 app = Flask(__name__)
 
@@ -34,6 +35,37 @@ def register_user():
         "message": "User registered successfully",
         "id": unique_id
     }), 201
+
+# -- POST Service to Accept Attachment as Request and Send Document ID in Response ---
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    """
+    To test in Postman:
+    1. Body > form-data
+    2. Key: 'file' (change type to 'File'), Value: [Select your file]
+    """
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400  
+    
+    unique_id = str(uuid.uuid4())
+
+    # Initialize GCP Storage Client
+    client = storage.Client()
+    bucket = client.bucket(os.environ.get("GCP_BUCKET_NAME", "learn_microservices"))
+    blob = bucket.blob(f"{unique_id}_{file.filename}")
+    blob.upload_from_file(file)
+
+    return jsonify({
+        "message": "File uploaded successfully",
+        "document_id": unique_id
+    }), 201
+
+
 
 if __name__ == "__main__":
     # Use the PORT environment variable provided by Cloud Run
