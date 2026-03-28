@@ -65,7 +65,8 @@ def upload_file():
 
     return jsonify({
         "message": "File uploaded successfully",
-        "document_url": f"{unique_id}_{file.filename}"
+        "document_name": f"{unique_id}_{file.filename}",
+        "document_url": public_url
     }), 201
 
 
