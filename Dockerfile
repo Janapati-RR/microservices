@@ -18,4 +18,5 @@ COPY . .
 USER appuser
 
 # Start the app using Gunicorn for production-readiness
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 120 main:app
+EXPOSE 8080
+CMD exec gunicorn --bind :${PORT:-8080} --workers 1 --threads 8 --timeout 120 main:app

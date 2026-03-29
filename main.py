@@ -1,76 +1,19 @@
 import os
-import uuid
-import datetime
-from flask import Flask, request, jsonify
-from google.cloud import storage
+from flask import Flask
+from services.rest_sum_service import register as register_rest_sum
+from services.rest_register_service import register as register_rest_register
+from services.rest_upload_service import register as register_rest_upload
+from services.soap_gateway import register as register_soap_gateway
 
 app = Flask(__name__)
 
-# --- GET SERVICE (Sum of 2 numbers) ---
-@app.route('/sum', methods=['GET'])
-def add_numbers():
-    # Get numbers from request parameters (e.g., /sum?num1=5&num2=10)
-    try:
-        num1 = float(request.args.get('num1', 0))
-        num2 = float(request.args.get('num2', 0))
-        return jsonify({"result": num1 + num2}), 200
-    except ValueError:
-        return jsonify({"error": "Invalid input. Please provide numbers."}), 400
+register_rest_sum(app)
+register_rest_register(app)
+register_rest_upload(app)
+register_soap_gateway(app)
 
-# --- POST SERVICE (User Registration) ---
-@app.route('/register', methods=['POST'])
-def register_user():
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "No JSON data provided"}), 400
-        
-    name = data.get('name')
-    age = data.get('age')
-    phone = data.get('phone')
 
-    if not all([name, age, phone]):
-        return jsonify({"error": "Missing name, age, or phone"}), 400
-
-    unique_id = str(uuid.uuid4())
-    return jsonify({
-        "message": "User registered successfully",
-        "id": unique_id
-    }), 201
-
-# -- POST Service to Accept Attachment as Request and Send Document ID in Response ---
-
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    """
-    To test in Postman:
-    1. Body > form-data
-    2. Key: 'file' (change type to 'File'), Value: [Select your file]
-    """
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
-
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400  
     
-    unique_id = str(uuid.uuid4())
-
-    # Initialize GCP Storage Client
-    client = storage.Client()
-    bucket = client.bucket(os.environ.get("GCP_BUCKET_NAME", "learn_microservices"))
-    blob = bucket.blob(f"{unique_id}_{file.filename}")
-    blob.upload_from_file(file)
-    # Get Public URL
-    public_url = blob.public_url
-
-    print(public_url)
-
-
-    return jsonify({
-        "message": "File uploaded successfully",
-        "document_name": f"{unique_id}_{file.filename}",
-        "document_url": public_url
-    }), 201
 
 
 
