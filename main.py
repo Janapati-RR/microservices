@@ -62,21 +62,14 @@ def upload_file():
     blob.upload_from_file(file)
     # Get Public URL
     public_url = blob.public_url
-    signed_url = blob.generate_signed_url(
-        version="v4",
-        expiration=datetime.timedelta(minutes=15),
-        method="GET",
-    )
 
     print(public_url)
-    print(signed_url)
 
 
     return jsonify({
         "message": "File uploaded successfully",
         "document_name": f"{unique_id}_{file.filename}",
-        "document_url": public_url,
-        "document_signed_url": signed_url
+        "document_url": public_url
     }), 201
 
 
