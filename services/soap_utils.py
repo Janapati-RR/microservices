@@ -1,5 +1,5 @@
+import xml.etree.ElementTree as ET
 from flask import Response
-from defusedxml import ElementTree as ET
 
 SOAP_NS = "http://schemas.xmlsoap.org/soap/envelope/"
 SERVICE_NS = "http://microservices.example.com/soap"

@@ -1,5 +1,5 @@
+import defusedxml.ElementTree as safe_et
 from flask import Response, request
-from defusedxml import ElementTree as ET
 from .soap_register_service import handle as handle_register
 from .soap_sum_service import handle as handle_sum
 from .soap_upload_service import handle as handle_upload
@@ -20,8 +20,8 @@ def register(app):
             )
 
         try:
-            envelope = ET.fromstring(request.data or b"")
-        except ET.ParseError:
+            envelope = safe_et.fromstring(request.data or b"")
+        except safe_et.ParseError:
             return soap_fault("Invalid XML payload.")
 
         body = envelope.find(qname(SOAP_NS, "Body"))
