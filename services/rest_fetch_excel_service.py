@@ -6,12 +6,19 @@ from google.cloud import storage
 def register(app):
     def fetch_excel():
         try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "No JSON data provided"}), 400
+            file = data.get("file")
+            if not file:
+                return jsonify({"error": "No file provided"}), 400
+
             # Initialize the GCS client
             client = storage.Client()
             
             # Hardcoded bucket and filename as requested
             bucket_name = "pyproject-rj123-bucket"
-            blob_name = "10mb.xlsx"
+            blob_name = file
             
             bucket = client.bucket(bucket_name)
             blob = bucket.blob(blob_name)
