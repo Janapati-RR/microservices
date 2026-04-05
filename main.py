@@ -4,6 +4,7 @@ from services.rest_sum_service import register as register_rest_sum
 from services.rest_register_service import register as register_rest_register
 from services.rest_upload_service import register as register_rest_upload
 from services.soap_gateway import register as register_soap_gateway
+from services.rest_fetch_excel_service import register as register_rest_fetch_excel
 
 app = Flask(__name__)
 
@@ -11,7 +12,7 @@ register_rest_sum(app)
 register_rest_register(app)
 register_rest_upload(app)
 register_soap_gateway(app)
-
+register_rest_fetch_excel(app)
 
     
 
