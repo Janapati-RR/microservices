@@ -1,6 +1,6 @@
 import os
 import base64
-from flask import jsonify
+from flask import jsonify, request
 from google.cloud import storage
 
 def register(app):
